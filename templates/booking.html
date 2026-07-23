@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block body_class %}inner-page{% endblock %}
+{% block title %}Бронювання - Еко Котедж{% endblock %}
+
+{% block content %}
+<section class="page-hero compact-hero">
+    <div class="reveal">
+        <p class="eyebrow">Заявка на відпочинок</p>
+        <h1>Бронювання хатинки</h1>
+        <p>Оберіть період у календарі та залиште контакти. Заявка потрапить в адмін-панель зі статусом pending.</p>
+    </div>
+</section>
+
+<section class="section booking-section reveal">
+    <form class="booking-form premium-form" method="post" data-booking-calendar-form data-validate-form>
+        <div class="booking-calendar-panel">
+            <h2>Ваші дати</h2>
+            <p>Календар одразу показує зайняті дні. Для бронювання виберіть дату заїзду та дату виїзду.</p>
+            <input type="hidden" name="check_in" value="{{ form.get('check_in', '') }}">
+            <input type="hidden" name="check_out" value="{{ form.get('check_out', '') }}">
+            <input class="calendar-anchor" type="text" data-inline-calendar aria-label="Календар бронювання" readonly>
+            <div class="calendar-summary compact">
+                <div>
+                    <span>Заїзд</span>
+                    <strong data-check-in-label>{{ form.get('check_in') or 'Оберіть дату' }}</strong>
+                </div>
+                <div>
+                    <span>Виїзд</span>
+                    <strong data-check-out-label>{{ form.get('check_out') or 'Оберіть дату' }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="booking-fields">
+            <h2>Контакти</h2>
+            <div class="form-row">
+                <label>Ім'я
+                    <input type="text" name="first_name" value="{{ form.get('first_name', '') }}" required>
+                </label>
+                <label>Прізвище
+                    <input type="text" name="last_name" value="{{ form.get('last_name', '') }}" required>
+                </label>
+            </div>
+            <div class="form-row">
+                <label>Телефон
+                    <input type="tel" name="phone" value="{{ form.get('phone', '') }}" required>
+                </label>
+                <label>Email
+                    <input type="email" name="email" value="{{ form.get('email', '') }}" required>
+                </label>
+            </div>
+            <label>Коментар
+                <textarea name="comment" rows="5">{{ form.get('comment', '') }}</textarea>
+            </label>
+            <button class="primary-button" type="submit">Надіслати заявку</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

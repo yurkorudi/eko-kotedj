@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Вхід адміністратора - Еко Котедж{% endblock %}
+
+{% block content %}
+<section class="page-hero compact-hero">
+    <div>
+        <p class="eyebrow">Адмін-панель</p>
+        <h1>Вхід адміністратора</h1>
+    </div>
+</section>
+
+<section class="section form-section narrow">
+    <form class="booking-form" method="post">
+        <label>Логін
+            <input type="text" name="username" required>
+        </label>
+        <label>Пароль
+            <input type="password" name="password" required>
+        </label>
+        <button class="primary-button" type="submit">Увійти</button>
+    </form>
+</section>
+{% endblock %}

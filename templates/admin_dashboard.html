@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Адмін-панель - Еко Котедж{% endblock %}
+
+{% block content %}
+<section class="page-hero admin-hero">
+    <div>
+        <p class="eyebrow">Керування</p>
+        <h1>Адмін-панель</h1>
+        <p>Бронювання, ручне блокування дат і завантаження фотографій.</p>
+    </div>
+    <a class="secondary-button" href="{{ url_for('main.admin_logout') }}">Вийти</a>
+</section>
+
+<section class="admin-section">
+    <div class="admin-heading">
+        <h2>Бронювання</h2>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ім'я</th>
+                    <th>Телефон</th>
+                    <th>Email</th>
+                    <th>Дати</th>
+                    <th>Статус</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.guest_name }}</td>
+                        <td>{{ booking.phone }}</td>
+                        <td>{{ booking.email }}</td>
+                        <td>{{ booking.check_in.strftime('%d.%m.%Y') }} - {{ booking.check_out.strftime('%d.%m.%Y') }}</td>
+                        <td><span class="status status-{{ booking.status }}">{{ booking.status }}</span></td>
+                        <td class="actions">
+                            <form method="post" action="{{ url_for('main.update_booking_status', booking_id=booking.id, status='confirmed') }}">
+                                <button type="submit">Підтвердити</button>
+                            </form>
+                            <form method="post" action="{{ url_for('main.update_booking_status', booking_id=booking.id, status='cancelled') }}">
+                                <button type="submit">Скасувати</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">Поки немає бронювань.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="admin-grid">
+    <article class="admin-card">
+        <h2>Додати бронювання вручну</h2>
+        <form method="post" action="{{ url_for('main.add_manual_booking') }}" class="admin-form">
+            <label>Початок
+                <input type="text" name="check_in" class="date-input" required>
+            </label>
+            <label>Завершення
+                <input type="text" name="check_out" class="date-input" required>
+            </label>
+            <label>Коментар
+                <input type="text" name="comment" placeholder="Наприклад: технічне бронювання">
+            </label>
+            <button class="primary-button" type="submit">Зберегти</button>
+        </form>
+    </article>
+
+    <article class="admin-card">
+        <h2>Hero Image</h2>
+        <form method="post" action="{{ url_for('main.upload_image', image_type='hero') }}" enctype="multipart/form-data" class="admin-form">
+            <input type="file" name="image" accept="image/*" required>
+            <input type="text" name="alt_text" placeholder="Опис фото">
+            <button class="primary-button" type="submit">Завантажити</button>
+        </form>
+    </article>
+
+    <article class="admin-card">
+        <h2>Фото хатинки</h2>
+        <form method="post" action="{{ url_for('main.upload_image', image_type='cabin') }}" enctype="multipart/form-data" class="admin-form">
+            <input type="file" name="image" accept="image/*" required>
+            <input type="text" name="alt_text" placeholder="Опис фото">
+            <button class="primary-button" type="submit">Завантажити</button>
+        </form>
+    </article>
+
+    <article class="admin-card">
+        <h2>Галерея</h2>
+        <form method="post" action="{{ url_for('main.upload_image', image_type='gallery') }}" enctype="multipart/form-data" class="admin-form">
+            <input type="file" name="image" accept="image/*" required>
+            <input type="text" name="alt_text" placeholder="Опис фото">
+            <button class="primary-button" type="submit">Завантажити</button>
+        </form>
+    </article>
+</section>
+{% endblock %}

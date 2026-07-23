@@ -1,0 +1,20 @@
+<header class="site-header">
+    <a class="logo" href="{{ url_for('main.index') }}" aria-label="На головну">
+        <span>ЕК</span>
+        <strong>Еко Котедж</strong>
+    </a>
+
+    <button class="menu-toggle" type="button" aria-label="Відкрити меню" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <nav class="main-nav" aria-label="Головне меню">
+        <a href="{{ url_for('main.index') }}#about">Про хатинку</a>
+        <a href="{{ url_for('main.index') }}#availability">Доступність</a>
+        <a href="{{ url_for('main.index') }}#gallery">Галерея</a>
+        <a href="{{ url_for('main.index') }}#contacts">Контакти</a>
+        <a class="nav-button" href="{{ url_for('main.booking') }}">Забронювати</a>
+    </nav>
+</header>

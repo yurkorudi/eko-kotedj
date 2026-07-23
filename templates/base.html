@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Еко Котедж у Карпатах{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    {% include 'includes/header.html' %}
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-list">
+                    {% for category, message in messages %}
+                        <p class="flash flash-{{ category }}">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include 'includes/footer.html' %}
+
+    <div class="lightbox" id="lightbox" aria-hidden="true">
+        <button class="lightbox-close" type="button" aria-label="Закрити">×</button>
+        <img src="" alt="">
+    </div>
+
+    <svg class="icon-sprite" aria-hidden="true">
+        <symbol id="icon-home" viewBox="0 0 24 24">
+            <path d="M3 10.8 12 3l9 7.8v9.7a1.5 1.5 0 0 1-1.5 1.5H4.5A1.5 1.5 0 0 1 3 20.5Z"></path>
+            <path d="M9 22v-7h6v7"></path>
+        </symbol>
+        <symbol id="icon-wifi" viewBox="0 0 24 24">
+            <path d="M5 13a10 10 0 0 1 14 0"></path>
+            <path d="M8.5 16.5a5 5 0 0 1 7 0"></path>
+            <path d="M12 20h.01"></path>
+        </symbol>
+        <symbol id="icon-car" viewBox="0 0 24 24">
+            <path d="M5 12 7 6h10l2 6"></path>
+            <path d="M4 12h16v6H4z"></path>
+            <path d="M7 18v2"></path>
+            <path d="M17 18v2"></path>
+        </symbol>
+        <symbol id="icon-fire" viewBox="0 0 24 24">
+            <path d="M12 22c4 0 7-2.7 7-6.8 0-3.2-2.1-5.7-4.6-7.8.1 2.4-.8 3.9-2.4 4.8.3-3.2-1.3-5.6-4-8.2.2 4.4-3 6.4-3 11.1C5 19.2 8 22 12 22Z"></path>
+        </symbol>
+        <symbol id="icon-bath" viewBox="0 0 24 24">
+            <path d="M4 11h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6Z"></path>
+            <path d="M7 11V6a3 3 0 0 1 6 0"></path>
+        </symbol>
+        <symbol id="icon-tree" viewBox="0 0 24 24">
+            <path d="M12 3 5 12h5l-4 6h12l-4-6h5Z"></path>
+            <path d="M12 18v4"></path>
+        </symbol>
+        <symbol id="icon-kitchen" viewBox="0 0 24 24">
+            <path d="M6 3v18"></path>
+            <path d="M10 3v7a4 4 0 0 1-4 4"></path>
+            <path d="M17 3v18"></path>
+            <path d="M14 3h6"></path>
+        </symbol>
+        <symbol id="icon-snow" viewBox="0 0 24 24">
+            <path d="M12 2v20"></path>
+            <path d="m4.9 4.9 14.2 14.2"></path>
+            <path d="M2 12h20"></path>
+            <path d="m19.1 4.9-14.2 14.2"></path>
+        </symbol>
+    </svg>
+
+    <script type="application/json" id="blocked-dates-data">{{ blocked_dates|default([])|tojson }}</script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/uk.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
