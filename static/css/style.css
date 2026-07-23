@@ -1,5 +1,5 @@
 :root {
-    --green: #8DBE8A;
+    --green: #52944f;
     --green-soft: #A9D6A4;
     --green-pale: #D9F2D2;
     --page: #F8FBF6;
@@ -452,14 +452,10 @@ h2 {
 .flatpickr-calendar.inline {
     width: 100%;
     max-width: 100%;
-    aspect-ratio: 1 / 1;
     border: 0;
     border-radius: 20px;
     box-shadow: none;
     background: var(--page);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }
 
 .flatpickr-months {
@@ -475,33 +471,22 @@ h2 {
     font-weight: 800;
 }
 
-.flatpickr-weekdays,
-.dayContainer {
-    width: 100%;
-    max-width: 100%;
+.flatpickr-weekdays{
+    width:100%;
 }
 
 .flatpickr-days {
-    width: 100%;
-    flex: 1;
-    display: flex;
+    width:100%;
 }
 
-.flatpickr-day {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: auto;
-    max-width: none;
-    border-radius: 12px;
-    color: var(--text);
-    line-height: 1;
+.flatpickr-day{
+    border-radius:12px;
+    color:var(--text);
 }
 
 .flatpickr-innerContainer,
-.flatpickr-rContainer {
-    width: 100%;
-    flex: 1;
+.flatpickr-rContainer{
+    width:100%;
 }
 
 .flatpickr-rContainer {
@@ -509,14 +494,10 @@ h2 {
     flex-direction: column;
 }
 
-.dayContainer {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    grid-auto-rows: 1fr;
-    width: 100%;
-    min-width: 100%;
-    max-width: 100%;
-    flex: 1;
+.dayContainer{
+    width:100%;
+    min-width:100%;
+    max-width:100%;
 }
 
 .flatpickr-day.today {

@@ -12,7 +12,7 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "change-me-in-production")
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
-        "mysql+pymysql://root:QweAsd15243@localhost/eko_kotedj?charset=utf8mb4",
+        "mysql+pymysql://db_admin:QweAsd15243@24.144.117.96/eko_kotedj?charset=utf8mb4",
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
