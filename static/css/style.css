@@ -152,6 +152,12 @@ textarea {
     transform: translateY(-2px);
 }
 
+.primary-button {
+    min-height: 64px;
+    min-width: 294px;
+    padding: 13px 24px;
+}
+
 .primary-button:disabled {
     cursor: not-allowed;
     opacity: 0.45;
@@ -471,22 +477,22 @@ h2 {
     font-weight: 800;
 }
 
-.flatpickr-weekdays{
-    width:100%;
+.flatpickr-weekdays {
+    width: 100%;
 }
 
 .flatpickr-days {
-    width:100%;
+    width: 100%;
 }
 
-.flatpickr-day{
-    border-radius:12px;
-    color:var(--text);
+.flatpickr-day {
+    border-radius: 12px;
+    color: var(--text);
 }
 
 .flatpickr-innerContainer,
-.flatpickr-rContainer{
-    width:100%;
+.flatpickr-rContainer {
+    width: 100%;
 }
 
 .flatpickr-rContainer {
@@ -494,10 +500,19 @@ h2 {
     flex-direction: column;
 }
 
-.dayContainer{
-    width:100%;
-    min-width:100%;
-    max-width:100%;
+.dayContainer {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.dayContainer span{
+    width: 100%;
+    height: 100%;
+    justify-self: center;
 }
 
 .flatpickr-day.today {
@@ -959,6 +974,11 @@ textarea {
     .hero {
         min-height: 100vh;
         padding: 118px 20px 70px;
+    }
+
+    .primary-button {
+        min-width: 64px;
+        min-height: 48px;
     }
 
     .hero::after {
