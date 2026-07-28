@@ -438,11 +438,13 @@ h2 {
 
 .calendar-card {
     display: grid;
-    grid-template-columns: minmax(300px, 1fr) minmax(260px, 0.42fr);
+    grid-template-columns: minmax(300px, 1fr) max-content;
     gap: 28px;
     max-width: 1080px;
     margin: 0 auto;
     padding: clamp(18px, 3vw, 34px);
+    justify-self: center;
+    width: fit-content;
 }
 
 .calendar-anchor {
@@ -462,10 +464,11 @@ h2 {
     border-radius: 20px;
     box-shadow: none;
     background: var(--page);
+    padding: 15px;
 }
 
 .flatpickr-months {
-    padding: 14px 12px 4px;
+    padding: 14px 0 4px;
 }
 
 .flatpickr-months .flatpickr-month {
@@ -544,6 +547,7 @@ h2 {
     display: grid;
     align-content: center;
     gap: 16px;
+    width: fit-content;
 }
 
 .calendar-summary div {
@@ -652,7 +656,7 @@ th {
 
 .admin-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px;
     padding-top: 0;
 }
@@ -674,6 +678,7 @@ th {
 .admin-form {
     display: grid;
     gap: 14px;
+    align-content: end;
 }
 
 .premium-form {
@@ -923,6 +928,54 @@ textarea {
     transform: translateY(0);
 }
 
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-btn {
+    width: 250px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    width: 250px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    z-index: 10;
+}
+
+.dropdown-content label {
+    display: block;
+    margin: 6px 0;
+}
+
+.dropdown.open .dropdown-content {
+    display: block;
+}
+
+.dropdown.open .dropdown-content label{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: fit-content;
+    white-space: nowrap;
+}
+
+.about-layout{
+    margin-bottom: 60px;
+}
+
+.about-layout:last-child{
+    margin-bottom: 0;
+}
+
 @media (max-width: 1060px) {
     .menu-toggle {
         display: block;
@@ -959,6 +1012,11 @@ textarea {
     .footer-main,
     .admin-grid {
         grid-template-columns: 1fr;
+    }
+
+    .calendar-card{
+        margin: 0;
+        width: 100%;
     }
 
     .gallery-grid {
@@ -999,6 +1057,10 @@ textarea {
     .form-row,
     .gallery-grid {
         grid-template-columns: 1fr;
+    }
+
+    .calendar-summary{
+        width: 100%;
     }
 
     .flatpickr-calendar.inline {

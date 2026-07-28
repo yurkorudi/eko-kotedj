@@ -36,6 +36,7 @@ class Booking(db.Model):
     status = db.Column(db.String(20), default="pending", nullable=False, index=True)
     source = db.Column(db.String(20), default="guest", nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    home_id = db.Column(db.Integer, nullable=False)
 
     @property
     def guest_name(self):
@@ -58,7 +59,7 @@ class CabinImage(db.Model):
     image_path = db.Column(db.String(255), nullable=False)
     alt_text = db.Column(db.String(160), nullable=False, default="Фото хатинки")
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-
+    home_id = db.Column(db.Integer, nullable=False, default="1")
 
 class HeroImage(db.Model):
     __tablename__ = "hero_images"
@@ -68,3 +69,23 @@ class HeroImage(db.Model):
     alt_text = db.Column(db.String(160), nullable=False, default="Гори біля хатинки")
     is_active = db.Column(db.Boolean, default=True, nullable=False, index=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+class Home(db.Model):
+    __tablename__ = "home"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+    daily_price = db.Column(db.Integer, nullable=False)
+    holiday_price = db.Column(db.Integer, nullable=False)
+    amenities = db.Column(db.String(255))
+
+
+class Comment(db.Model):
+    __tablename__ = "comments"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    comment = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    home_id = db.Column(db.Integer, nullable=False)

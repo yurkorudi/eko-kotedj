@@ -14,6 +14,7 @@
 
 <section class="section booking-section reveal">
     <form class="booking-form premium-form" method="post" data-booking-calendar-form data-validate-form>
+        <input type="hidden" name="home_id" id="home_id">
         <div class="booking-calendar-panel">
             <h2>Ваші дати</h2>
             <p>Календар одразу показує зайняті дні. Для бронювання виберіть дату заїзду та дату виїзду.</p>
@@ -57,4 +58,6 @@
         </div>
     </form>
 </section>
+
+<script src="{{ url_for('static', filename='js/booking.js') }}"></script>
 {% endblock %}

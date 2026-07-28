@@ -52,7 +52,10 @@ function setupInlineCalendars() {
     }
 
     calendars.forEach((calendar) => {
-        const form = calendar.closest("form");
+        const form = calendar.closest("[data-inline-calendar-form]");
+
+        const blockedDates = JSON.parse(form.dataset.blocked || "[]");
+
         const checkInInput = form.querySelector("[name='check_in']");
         const checkOutInput = form.querySelector("[name='check_out']");
         const checkInLabel = form.querySelector("[data-check-in-label]");
@@ -68,11 +71,29 @@ function setupInlineCalendars() {
             locale: "uk",
             disable: blockedDates,
             defaultDate: defaultDates,
+
             onChange: (selectedDates, dateString, instance) => {
-                updateSelectedRange(selectedDates, instance, checkInInput, checkOutInput, checkInLabel, checkOutLabel, submitButton);
+                updateSelectedRange(
+                    selectedDates,
+                    instance,
+                    checkInInput,
+                    checkOutInput,
+                    checkInLabel,
+                    checkOutLabel,
+                    submitButton
+                );
             },
+
             onReady: (selectedDates, dateString, instance) => {
-                updateSelectedRange(selectedDates, instance, checkInInput, checkOutInput, checkInLabel, checkOutLabel, submitButton);
+                updateSelectedRange(
+                    selectedDates,
+                    instance,
+                    checkInInput,
+                    checkOutInput,
+                    checkInLabel,
+                    checkOutLabel,
+                    submitButton
+                );
             },
         });
     });
@@ -94,6 +115,7 @@ function updateSelectedRange(selectedDates, instance, checkInInput, checkOutInpu
 }
 
 function getBlockedDates() {
+   
     const dataElement = document.getElementById("blocked-dates-data");
     if (!dataElement) {
         return [];

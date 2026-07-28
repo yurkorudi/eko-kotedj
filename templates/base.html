@@ -75,7 +75,7 @@
         </symbol>
     </svg>
 
-    <script type="application/json" id="blocked-dates-data">{{ blocked_dates|default([])|tojson }}</script>
+    <script type="application/json" id="blocked-dates-data">{{ blocked_dates|tojson }}</script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/uk.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>

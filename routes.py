@@ -16,7 +16,7 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 
-from models import Admin, Booking, CabinImage, GalleryImage, HeroImage, db
+from models import Admin, Booking, CabinImage, GalleryImage, HeroImage, Home, db
 
 
 main_bp = Blueprint("main", __name__)
@@ -76,13 +76,19 @@ def dates_are_available(check_in, check_out, ignore_booking_id=None):
 
 def get_blocked_dates():
     bookings = Booking.query.filter(Booking.status.in_(["confirmed", "blocked"])).all()
-    unavailable_dates = set()
+    unavailable_dates = {}
 
     for booking in bookings:
-        for day in date_range(booking.check_in, booking.check_out):
-            unavailable_dates.add(day.isoformat())
+        if booking.home_id not in unavailable_dates:
+            unavailable_dates[booking.home_id] = set()
 
-    return sorted(unavailable_dates)
+        for day in date_range(booking.check_in, booking.check_out):
+            unavailable_dates[booking.home_id].add(day.isoformat())
+
+    return {
+        home_id: sorted(dates)
+        for home_id, dates in unavailable_dates.items()
+    }
 
 
 def allowed_file(filename):
@@ -120,10 +126,26 @@ def get_home_images():
 @main_bp.route("/")
 def index():
     images = get_home_images()
+
+    ICON_MAP = {
+        "Камін": "icon-fire",
+        "Wi-Fi": "icon-wifi",
+        "Парковка": "icon-car",
+        "Мангал": "icon-fire",
+        "Джакузі": "icon-bath",
+        "Тераса": "icon-tree",
+        "Кухня": "icon-kitchen",
+        "Кондиціонер": "icon-snow",
+    }
+
+    home = Home.query.all()
+
     return render_template(
         "index.html",
         blocked_dates=get_blocked_dates(),
         **images,
+        icon_map=ICON_MAP,
+        home=home,
     )
 
 
@@ -162,6 +184,7 @@ def booking():
             check_in=check_in,
             check_out=check_out,
             comment=form.get("comment", "").strip() or None,
+            home_id=form.get("home_id"),
         )
         db.session.add(new_booking)
         db.session.commit()
@@ -220,9 +243,9 @@ def admin_dashboard():
     )
 
 
-@main_bp.post("/admin/bookings/<int:booking_id>/<status>")
+@main_bp.post("/admin/bookings/<int:booking_id>/<status>/<int:home>")
 @login_required
-def update_booking_status(booking_id, status):
+def update_booking_status(booking_id, status, home):
     if status not in {"confirmed", "cancelled", "pending"}:
         flash("Невідомий статус бронювання.", "error")
         return redirect(url_for("main.admin_dashboard"))
@@ -263,10 +286,41 @@ def add_manual_booking():
         status="blocked",
         source="admin",
         comment=request.form.get("comment", "").strip() or "Додано вручну",
+        home_id=request.form.get("home_id")
     )
     db.session.add(booking)
     db.session.commit()
     flash("Дати додано як недоступні.", "success")
+    return redirect(url_for("main.admin_dashboard"))
+
+
+@main_bp.post("/admin/manual-home")
+@login_required
+def add_manual_home():
+    name = request.form.get("name")
+    description = request.form.get("description")
+    daily_price = request.form.get("daily_price")
+
+    if not name or not description or not daily_price:
+        flash("Заповніть всі поля name.", "error")
+        return redirect(url_for("main.admin_dashboard"))
+    
+    holiday_price = request.form.get("holiday_price")
+    amenities = ", ".join(request.form.getlist("amenities"))
+
+    if not holiday_price:
+        holiday_price = daily_price
+
+    home = Home(
+        name=name,
+        description=description,
+        daily_price=daily_price,
+        holiday_price=holiday_price,  
+        amenities=amenities,      
+    )
+    db.session.add(home)
+    db.session.commit()
+    flash("Хатинку додано успішно.", "success")
     return redirect(url_for("main.admin_dashboard"))
 
 
@@ -296,6 +350,8 @@ def upload_image(image_type):
     if image_type == "hero":
         HeroImage.query.update({"is_active": False})
         image = image_model(image_path=image_path, alt_text=request.form.get("alt_text") or "Гори біля хатинки")
+    elif image_type == "cabin":
+        image = image_model(image_path=image_path, alt_text=request.form.get("alt_text") or "Фото хатинки", home_id=request.form.get("id"))
     else:
         image = image_model(image_path=image_path, alt_text=request.form.get("alt_text") or "Фото хатинки")
 

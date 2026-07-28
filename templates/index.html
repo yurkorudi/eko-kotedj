@@ -5,7 +5,9 @@
 
 {% block content %}
 <section class="hero">
-    <img class="hero-bg" src="{{ hero_image if hero_image.startswith('http') else url_for('static', filename=hero_image) }}" alt="Гірський краєвид біля Еко Котеджу">
+    <img class="hero-bg"
+        src="{{ hero_image if hero_image.startswith('http') else url_for('static', filename=hero_image) }}"
+        alt="Гірський краєвид біля Еко Котеджу">
     <div class="hero-content reveal">
         <p class="eyebrow">Карпати · приватна хатинка</p>
         <h1>Еко Котедж</h1>
@@ -15,89 +17,91 @@
 </section>
 
 <section class="section about-section reveal" id="about">
+    {% for homes in home %}
+
     <div class="about-layout">
         <div class="cabin-gallery" data-cabin-gallery>
-            {% set first_image = cabin_images[0] %}
-            {% if first_image is string %}
-                <img class="cabin-main-image" src="{{ first_image }}" alt="Фото хатинки в Карпатах">
-            {% else %}
-                <img class="cabin-main-image" src="{{ url_for('static', filename=first_image.image_path) }}" alt="{{ first_image.alt_text }}">
-            {% endif %}
+            {% set home_images = cabin_images | selectattr("home_id", "equalto", homes.id) | list %}
+            {% set first_image = home_images | first %}
+
+            {% if first_image %}
+            <img class="cabin-main-image" src="{{ url_for('static', filename=first_image.image_path) }}"
+                alt="{{ first_image.alt_text }}">
 
             <div class="cabin-thumbs">
-                {% for image in cabin_images %}
-                    {% if image is string %}
-                        <button class="thumb-button{% if loop.first %} is-active{% endif %}" type="button" data-image-src="{{ image }}" data-image-alt="Фото хатинки в Карпатах">
-                            <img src="{{ image }}" alt="Прев'ю хатинки">
-                        </button>
-                    {% else %}
-                        <button class="thumb-button{% if loop.first %} is-active{% endif %}" type="button" data-image-src="{{ url_for('static', filename=image.image_path) }}" data-image-alt="{{ image.alt_text }}">
-                            <img src="{{ url_for('static', filename=image.image_path) }}" alt="{{ image.alt_text }}">
-                        </button>
-                    {% endif %}
+                {% for image in home_images %}
+                <button class="thumb-button{% if loop.first %} is-active{% endif %}" type="button"
+                    data-image-src="{{ url_for('static', filename=image.image_path) }}"
+                    data-image-alt="{{ image.alt_text }}">
+                    <img src="{{ url_for('static', filename=image.image_path) }}" alt="{{ image.alt_text }}">
+                </button>
                 {% endfor %}
             </div>
+            {% endif %}
         </div>
 
         <article class="about-copy">
             <p class="eyebrow">Про хатинку</p>
-            <h2>Простір для тихого відпочинку в горах</h2>
-            <p>Котедж розташований поруч із лісом і створений для повільного, комфортного відпочинку. Усередині є світла кухня, камінна зона, спальня з краєвидом, тепла підлога та тераса для ранкової кави.</p>
+            <h2>{{ homes.name }}</h2>
+            <p>{{ homes.description }}</p>
 
             <div class="price-panel">
                 <span>Вартість</span>
-                <strong>від 4200 грн / ніч</strong>
-                <small>Вихідні - 5600 грн / ніч</small>
+                <strong>від {{ homes.daily_price }} грн / ніч</strong>
+                <small>Вихідні - {{ homes.holiday_price }} грн / ніч</small>
             </div>
 
             <div class="amenities">
-                <span class="chip"><svg><use href="#icon-fire"></use></svg>Камін</span>
-                <span class="chip"><svg><use href="#icon-wifi"></use></svg>Wi-Fi</span>
-                <span class="chip"><svg><use href="#icon-car"></use></svg>Парковка</span>
-                <span class="chip"><svg><use href="#icon-fire"></use></svg>Мангал</span>
-                <span class="chip"><svg><use href="#icon-bath"></use></svg>Джакузі</span>
-                <span class="chip"><svg><use href="#icon-tree"></use></svg>Тераса</span>
-                <span class="chip"><svg><use href="#icon-kitchen"></use></svg>Кухня</span>
-                <span class="chip"><svg><use href="#icon-snow"></use></svg>Кондиціонер</span>
+                {% for amenity in homes.amenities.split(", ") %}
+                <span class="chip"><svg>
+                        <use href="#{{ icon_map[amenity] }}"></use>
+                    </svg>{{ amenity }}</span>
+                {% endfor %}
             </div>
 
-            <a class="primary-button" href="#availability">Забронювати</a>
+            <a class="primary-button home-reservation-btn" href="#availability" data-id="{{ homes.id }}">Забронювати</a>
         </article>
     </div>
+
+    <section class="section availability-section reveal" id="availability">
+        <div class="section-heading centered">
+            <p class="eyebrow">Доступність</p>
+            <h2>Оберіть дати відпочинку</h2>
+            <p>Зайняті дні підсвічені в календарі та недоступні для вибору.</p>
+        </div>
+
+        <form class="calendar-card" action="{{ url_for('main.booking') }}" method="get" data-inline-calendar-form data-blocked='{{ blocked_dates.get(homes.id, [])|tojson }}'>
+            <input type="hidden" name="check_in">
+            <input type="hidden" name="check_out">
+            <input class="calendar-anchor" type="text" data-inline-calendar aria-label="Календар доступності" readonly>
+            <div class="calendar-summary">
+                <div>
+                    <span>Заїзд</span>
+                    <strong data-check-in-label>Оберіть дату</strong>
+                </div>
+                <div>
+                    <span>Виїзд</span>
+                    <strong data-check-out-label>Оберіть дату</strong>
+                </div>
+                <button class="primary-button" type="submit" disabled>Забронювати</button>
+            </div>
+        </form>
+    </section>
+    <!-- <script type="application/json" id="blocked-dates-data">{{ blocked_dates.get(homes.id, [])|tojson }}</script> -->
+    {% endfor %}
+
 </section>
 
 <section class="story-section reveal">
     <div class="story-content">
         <p class="eyebrow">Історія створення</p>
         <h2>Будинок, який виріс із любові до дерева й тиші</h2>
-        <p>Ідея котеджу з'явилася після багатьох походів Карпатами. Ми хотіли створити місце з натуральним деревом, теплим світлом і деталями, які не відволікають від головного: природи, спокою та часу для себе.</p>
+        <p>Ідея котеджу з'явилася після багатьох походів Карпатами. Ми хотіли створити місце з натуральним деревом,
+            теплим світлом і деталями, які не відволікають від головного: природи, спокою та часу для себе.</p>
     </div>
 </section>
 
-<section class="section availability-section reveal" id="availability">
-    <div class="section-heading centered">
-        <p class="eyebrow">Доступність</p>
-        <h2>Оберіть дати відпочинку</h2>
-        <p>Зайняті дні підсвічені в календарі та недоступні для вибору.</p>
-    </div>
 
-    <form class="calendar-card" action="{{ url_for('main.booking') }}" method="get" data-inline-calendar-form>
-        <input type="hidden" name="check_in">
-        <input type="hidden" name="check_out">
-        <input class="calendar-anchor" type="text" data-inline-calendar aria-label="Календар доступності" readonly>
-        <div class="calendar-summary">
-            <div>
-                <span>Заїзд</span>
-                <strong data-check-in-label>Оберіть дату</strong>
-            </div>
-            <div>
-                <span>Виїзд</span>
-                <strong data-check-out-label>Оберіть дату</strong>
-            </div>
-            <button class="primary-button" type="submit" disabled>Забронювати</button>
-        </div>
-    </form>
-</section>
 
 <section class="section gallery-section reveal" id="gallery">
     <div class="section-heading">
@@ -106,12 +110,14 @@
     </div>
     <div class="gallery-grid">
         {% for image in gallery_images %}
-            {% if image is string %}
-                <img src="{{ image }}" alt="Галерея Еко Котеджу" class="lightbox-image">
-            {% else %}
-                <img src="{{ url_for('static', filename=image.image_path) }}" alt="{{ image.alt_text }}" class="lightbox-image">
-            {% endif %}
+        {% if image is string %}
+        <img src="{{ image }}" alt="Галерея Еко Котеджу" class="lightbox-image">
+        {% else %}
+        <img src="{{ url_for('static', filename=image.image_path) }}" alt="{{ image.alt_text }}" class="lightbox-image">
+        {% endif %}
         {% endfor %}
     </div>
 </section>
+
+<script src="{{ url_for('static', filename='js/reservation.js') }}"></script>
 {% endblock %}
