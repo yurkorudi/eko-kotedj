@@ -1,0 +1,65 @@
+{% set current_home = home if home is defined else none %}
+{% set selected_amenities = (current_home.amenities.split(', ') if current_home and current_home.amenities else []) %}
+
+<div class="form-row">
+    <label>Номер будиночка
+        <input type="text" name="number" value="{{ current_home.number if current_home else '' }}">
+    </label>
+    <label>Назва
+        <input type="text" name="name" value="{{ current_home.name if current_home else '' }}" required>
+    </label>
+</div>
+
+<label>Опис
+    <textarea name="description" rows="4" required>{{ current_home.description if current_home else '' }}</textarea>
+</label>
+
+<div class="form-row">
+    <label>Добова вартість
+        <input type="number" name="daily_price" min="0" value="{{ current_home.daily_price if current_home else '' }}" required>
+    </label>
+    <label>Вартість вихідного дня
+        <input type="number" name="holiday_price" min="0" value="{{ current_home.holiday_price if current_home else '' }}">
+    </label>
+</div>
+
+<div class="form-row">
+    <label>Знижка, %
+        <input type="number" name="discount" min="0" max="100" value="{{ current_home.discount if current_home and current_home.discount is not none else '' }}">
+    </label>
+    <label>Місткість
+        <input type="number" name="capacity" min="0" value="{{ current_home.capacity if current_home and current_home.capacity is not none else '' }}">
+    </label>
+</div>
+
+<div class="form-row">
+    <label>Площа, м²
+        <input type="number" name="area" min="0" value="{{ current_home.area if current_home and current_home.area is not none else '' }}">
+    </label>
+    <label>Кількість кімнат
+        <input type="number" name="rooms" min="0" value="{{ current_home.rooms if current_home and current_home.rooms is not none else '' }}">
+    </label>
+</div>
+
+<div class="form-row">
+    <label>Кількість ліжок
+        <input type="number" name="beds" min="0" value="{{ current_home.beds if current_home and current_home.beds is not none else '' }}">
+    </label>
+    <label>Інші зручності
+        <input type="text" name="amenities_text" value="{{ current_home.amenities if current_home else '' }}" placeholder="Сауна, чан, smart TV">
+    </label>
+</div>
+
+<fieldset class="checkbox-grid">
+    <legend>Зручності</legend>
+    {% for amenity in amenity_options %}
+    <label class="checkbox-line">
+        <input type="checkbox" name="amenities" value="{{ amenity }}" {% if amenity in selected_amenities %}checked{% endif %}>
+        {{ amenity }}
+    </label>
+    {% endfor %}
+</fieldset>
+
+<label>Правила проживання
+    <textarea name="rules" rows="3">{{ current_home.rules if current_home and current_home.rules else '' }}</textarea>
+</label>

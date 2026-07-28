@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% set amenity_options = ['Камін', 'Wi-Fi', 'Парковка', 'Мангал', 'Джакузі', 'Тераса', 'Кухня', 'Кондиціонер'] %}
+
 {% block title %}Адмін-панель - Еко Котедж{% endblock %}
 
 {% block content %}
@@ -7,22 +9,22 @@
     <div>
         <p class="eyebrow">Керування</p>
         <h1>Адмін-панель</h1>
-        <p>Бронювання, ручне блокування дат і завантаження фотографій.</p>
+        <p>Бронювання, будиночки, блокування дат і фотографії.</p>
     </div>
     <a class="secondary-button" href="{{ url_for('main.admin_logout') }}">Вийти</a>
 </section>
 
 <section class="admin-section">
     <div class="admin-heading">
-        <h2>Бронювання</h2>
+        <h2>Активні бронювання</h2>
     </div>
     <div class="table-wrap">
         <table>
             <thead>
                 <tr>
-                    <th>Ім'я</th>
-                    <th>Телефон</th>
-                    <th>Email</th>
+                    <th>Будиночок</th>
+                    <th>Клієнт</th>
+                    <th>Контакти</th>
                     <th>Дати</th>
                     <th>Статус</th>
                     <th>Дії</th>
@@ -31,20 +33,33 @@
             <tbody>
                 {% for booking in bookings %}
                 <tr>
+                    <td>
+                        <strong>№ {{ booking.home.display_number if booking.home else booking.home_id }}</strong>
+                        <span class="table-muted">{{ booking.home.name if booking.home else 'Будиночок не знайдено' }}</span>
+                    </td>
                     <td>{{ booking.guest_name }}</td>
-                    <td>{{ booking.phone }}</td>
-                    <td>{{ booking.email }}</td>
-                    <td>{{ booking.check_in.strftime('%d.%m.%Y') }} - {{ booking.check_out.strftime('%d.%m.%Y') }}</td>
+                    <td>
+                        <div>{{ booking.phone }}</div>
+                        <span class="table-muted">{{ booking.email }}</span>
+                    </td>
+                    <td>
+                        {{ booking.check_in.strftime('%d.%m.%Y') }} - {{ booking.check_out.strftime('%d.%m.%Y') }}
+                        {% if booking.status == 'pending' and booking.expires_at %}
+                        <span class="table-muted">до {{ booking.expires_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                        {% endif %}
+                    </td>
                     <td><span class="status status-{{ booking.status }}">{{ booking.status }}</span></td>
                     <td class="actions">
-                        <form method="post"
-                            action="{{ url_for('main.update_booking_status', booking_id=booking.id, status='confirmed') }}">
+                        {% if booking.status == 'pending' %}
+                        <form method="post" action="{{ url_for('main.update_booking_status', booking_id=booking.id, status='confirmed', home=booking.home_id) }}">
                             <button type="submit">Підтвердити</button>
                         </form>
-                        <form method="post"
-                            action="{{ url_for('main.update_booking_status', booking_id=booking.id, status='cancelled') }}">
-                            <button type="submit">Скасувати</button>
+                        <form method="post" action="{{ url_for('main.update_booking_status', booking_id=booking.id, status='rejected', home=booking.home_id) }}">
+                            <button type="submit">Відхилити</button>
                         </form>
+                        {% else %}
+                        <span class="table-muted">Дій немає</span>
+                        {% endif %}
                     </td>
                 </tr>
                 {% else %}
@@ -67,11 +82,16 @@
             <label>Завершення
                 <input type="text" name="check_out" class="date-input" required>
             </label>
+            <label>Будиночок
+                <select name="home_id" required>
+                    <option value="">Оберіть будиночок</option>
+                    {% for home in homes %}
+                    <option value="{{ home.id }}">№ {{ home.display_number }} - {{ home.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
             <label>Коментар
                 <input type="text" name="comment" placeholder="Наприклад: технічне бронювання">
-            </label>
-            <label>Хатинка
-                <input type="number" name="home_id" placeholder="id хатинки: 1">
             </label>
             <button class="primary-button" type="submit">Зберегти</button>
         </form>
@@ -80,67 +100,114 @@
     <article class="admin-card">
         <h2>Додати будиночок</h2>
         <form method="post" action="{{ url_for('main.add_manual_home') }}" class="admin-form">
-            <label>Назва
-                <input type="text" name="name" class="date-input" required>
-            </label>
-            <label>Опис
-                <input type="text" name="description" class="date-input" required>
-            </label>
-            <label>Добова вартість
-                <input type="text" name="daily_price">
-            </label>
-            <label>Вартість вихідного дня
-                <input type="text" name="holiday_price">
-            </label>
-            <div class="dropdown">
-                <button type="button" class="dropdown-btn">
-                    Оберіть зручності ▼
-                </button>
+            {% include 'includes/home_form_fields.html' %}
+            <button class="primary-button" type="submit">Створити</button>
+        </form>
+    </article>
+</section>
 
-                <div class="dropdown-content">
-                    <label><input type="checkbox" name="amenities" value="Камін"> Камін</label>
-                    <label><input type="checkbox" name="amenities" value="Wi-Fi"> Wi-Fi</label>
-                    <label><input type="checkbox" name="amenities" value="Парковка"> Парковка</label>
-                    <label><input type="checkbox" name="amenities" value="Мангал"> Мангал</label>
-                    <label><input type="checkbox" name="amenities" value="Джакузі"> Джакузі</label>
-                    <label><input type="checkbox" name="amenities" value="Тераса"> Тераса</label>
-                    <label><input type="checkbox" name="amenities" value="Кухня"> Кухня</label>
-                    <label><input type="checkbox" name="amenities" value="Кондиціонер"> Кондиціонер</label>
+<section class="admin-section">
+    <div class="admin-heading">
+        <h2>Редагування будиночків</h2>
+    </div>
+    <div class="home-editor-list">
+        {% for home in homes %}
+        <article class="admin-card home-editor">
+            <div class="admin-heading inline-heading">
+                <h2>№ {{ home.display_number }} - {{ home.name }}</h2>
+            </div>
+
+            <form method="post" action="{{ url_for('main.edit_home', home_id=home.id) }}" class="admin-form">
+                {% include 'includes/home_form_fields.html' %}
+                <button class="primary-button" type="submit">Зберегти зміни</button>
+            </form>
+
+            <div class="image-manager">
+                <h3>Головне фото і галерея будиночка</h3>
+                <form method="post" action="{{ url_for('main.upload_image', image_type='cabin') }}" enctype="multipart/form-data" class="admin-form compact-upload">
+                    <input type="hidden" name="home_id" value="{{ home.id }}">
+                    <label>Фото
+                        <input type="file" name="images" accept="image/*" multiple required>
+                    </label>
+                    <label>Alt-текст
+                        <input type="text" name="alt_text" value="{{ home.name }}">
+                    </label>
+                    <label class="checkbox-line">
+                        <input type="checkbox" name="is_main" value="1"> Зробити перше фото головним
+                    </label>
+                    <button class="secondary-button" type="submit">Завантажити</button>
+                </form>
+
+                <div class="admin-thumbs">
+                    {% for image in cabin_images if image.home_id == home.id %}
+                    <div class="admin-thumb">
+                        <img src="{{ url_for('static', filename=image.image_path) }}" alt="{{ image.alt_text }}">
+                        {% if image.is_main %}
+                        <span class="status">Головне</span>
+                        {% endif %}
+                        <div class="actions">
+                            {% if not image.is_main %}
+                            <form method="post" action="{{ url_for('main.set_main_cabin_image', image_id=image.id) }}">
+                                <button type="submit">Головне</button>
+                            </form>
+                            {% endif %}
+                            <form method="post" action="{{ url_for('main.delete_image', image_type='cabin', image_id=image.id) }}">
+                                <button type="submit">Видалити</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="table-muted">Фото ще не завантажені.</p>
+                    {% endfor %}
                 </div>
             </div>
-            <button class="primary-button" type="submit">Зберегти</button>
-        </form>
-    </article>
+        </article>
+        {% else %}
+        <p>Будиночків ще немає.</p>
+        {% endfor %}
+    </div>
+</section>
 
+<section class="admin-grid">
     <article class="admin-card">
         <h2>Hero Image</h2>
-        <form method="post" action="{{ url_for('main.upload_image', image_type='hero') }}" enctype="multipart/form-data"
-            class="admin-form">
+        <form method="post" action="{{ url_for('main.upload_image', image_type='hero') }}" enctype="multipart/form-data" class="admin-form">
             <input type="file" name="image" accept="image/*" required>
             <input type="text" name="alt_text" placeholder="Опис фото">
             <button class="primary-button" type="submit">Завантажити</button>
         </form>
+        <div class="admin-thumbs">
+            {% for image in hero_images %}
+            <div class="admin-thumb">
+                <img src="{{ url_for('static', filename=image.image_path) }}" alt="{{ image.alt_text }}">
+                {% if image.is_active %}<span class="status">Активне</span>{% endif %}
+                <form method="post" action="{{ url_for('main.delete_image', image_type='hero', image_id=image.id) }}" class="actions">
+                    <button type="submit">Видалити</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
     </article>
 
     <article class="admin-card">
-        <h2>Фото хатинки</h2>
-        <form method="post" action="{{ url_for('main.upload_image', image_type='cabin') }}"
-            enctype="multipart/form-data" class="admin-form">
-            <input type="file" name="image" accept="image/*" required>
-            <input type="text" name="alt_text" placeholder="Опис фото">
-            <input type="number" name="id" placeholder="ID будиночка">
-            <button class="primary-button" type="submit">Завантажити</button>
-        </form>
-    </article>
-
-    <article class="admin-card">
-        <h2>Галерея</h2>
-        <form method="post" action="{{ url_for('main.upload_image', image_type='gallery') }}"
-            enctype="multipart/form-data" class="admin-form">
-            <input type="file" name="image" accept="image/*" required>
+        <h2>Галерея сайту</h2>
+        <form method="post" action="{{ url_for('main.upload_image', image_type='gallery') }}" enctype="multipart/form-data" class="admin-form">
+            <input type="file" name="images" accept="image/*" multiple required>
             <input type="text" name="alt_text" placeholder="Опис фото">
             <button class="primary-button" type="submit">Завантажити</button>
         </form>
+        <div class="admin-thumbs">
+            {% for image in gallery_images %}
+            <div class="admin-thumb">
+                <img src="{{ url_for('static', filename=image.image_path) }}" alt="{{ image.alt_text }}">
+                <form method="post" action="{{ url_for('main.delete_image', image_type='gallery', image_id=image.id) }}" class="actions">
+                    <button type="submit">Видалити</button>
+                </form>
+            </div>
+            {% else %}
+            <p class="table-muted">Фото галереї ще не завантажені.</p>
+            {% endfor %}
+        </div>
     </article>
 </section>
 

@@ -40,7 +40,8 @@ img {
 
 button,
 input,
-textarea {
+textarea,
+select {
     font: inherit;
 }
 
@@ -387,6 +388,22 @@ h2 {
     gap: 12px;
 }
 
+.home-specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.home-specs span,
+.home-rules {
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--page);
+    color: var(--muted);
+    font-weight: 800;
+}
+
 .chip {
     display: inline-flex;
     align-items: center;
@@ -630,8 +647,26 @@ th {
     font-weight: 900;
 }
 
-.status-cancelled {
+.status-cancelled,
+.status-rejected,
+.status-expired {
     background: #f6dddd;
+}
+
+.status-confirmed,
+.status-blocked {
+    background: var(--green-pale);
+}
+
+.status-pending {
+    background: #fff4cc;
+}
+
+.table-muted {
+    display: block;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
 }
 
 .actions {
@@ -729,7 +764,8 @@ label {
 }
 
 input,
-textarea {
+textarea,
+select {
     width: 100%;
     border: 1px solid var(--line);
     border-radius: 14px;
@@ -740,7 +776,8 @@ textarea {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
     border-color: var(--green);
     outline: none;
     background: var(--white);
@@ -749,6 +786,92 @@ textarea:focus {
 
 textarea {
     resize: vertical;
+}
+
+fieldset {
+    margin: 0;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+}
+
+legend {
+    padding: 0 8px;
+    color: var(--muted);
+    font-weight: 800;
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.checkbox-line {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 9px;
+}
+
+.checkbox-line input {
+    width: auto;
+}
+
+.home-editor-list {
+    display: grid;
+    gap: 18px;
+}
+
+.home-editor {
+    align-items: start;
+}
+
+.inline-heading {
+    margin-bottom: 0;
+}
+
+.image-manager {
+    display: grid;
+    gap: 14px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+}
+
+.image-manager h3 {
+    margin: 0;
+}
+
+.compact-upload {
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+}
+
+.compact-upload .checkbox-line,
+.compact-upload button {
+    align-self: end;
+}
+
+.admin-thumbs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.admin-thumb {
+    display: grid;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--page);
+}
+
+.admin-thumb img {
+    width: 100%;
+    aspect-ratio: 1 / 0.72;
+    border-radius: 10px;
+    object-fit: cover;
 }
 
 .gallery-grid {
@@ -1055,6 +1178,8 @@ textarea {
     .calendar-summary,
     .calendar-summary.compact,
     .form-row,
+    .checkbox-grid,
+    .compact-upload,
     .gallery-grid {
         grid-template-columns: 1fr;
     }

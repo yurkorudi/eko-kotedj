@@ -1,12 +1,14 @@
 const dropdown = document.querySelector(".dropdown");
-const button = dropdown.querySelector(".dropdown-btn");
+const button = dropdown ? dropdown.querySelector(".dropdown-btn") : null;
 
-button.addEventListener("click", () => {
-    dropdown.classList.toggle("open");
-});
+if (dropdown && button) {
+    button.addEventListener("click", () => {
+        dropdown.classList.toggle("open");
+    });
 
-document.addEventListener("click", (e) => {
-    if (!dropdown.contains(e.target)) {
-        dropdown.classList.remove("open");
-    }
-});
+    document.addEventListener("click", (e) => {
+        if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove("open");
+        }
+    });
+}

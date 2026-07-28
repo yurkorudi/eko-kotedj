@@ -13,8 +13,8 @@
 </section>
 
 <section class="section booking-section reveal">
-    <form class="booking-form premium-form" method="post" data-booking-calendar-form data-validate-form>
-        <input type="hidden" name="home_id" id="home_id">
+    <form class="booking-form premium-form" method="post" data-booking-calendar-form data-inline-calendar-form data-validate-form data-blocked='{{ blocked_dates.get(form.get("home_id")|int, [])|tojson }}'>
+        <input type="hidden" name="home_id" id="home_id" value="{{ form.get('home_id', '') }}">
         <div class="booking-calendar-panel">
             <h2>Ваші дати</h2>
             <p>Календар одразу показує зайняті дні. Для бронювання виберіть дату заїзду та дату виїзду.</p>

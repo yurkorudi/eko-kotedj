@@ -129,29 +129,35 @@ function getBlockedDates() {
 }
 
 function setupCabinGallery() {
-    const gallery = document.querySelector("[data-cabin-gallery]");
-    if (!gallery) {
+    const galleries = document.querySelectorAll("[data-cabin-gallery]");
+    if (!galleries.length) {
         return;
     }
 
-    const mainImage = gallery.querySelector(".cabin-main-image");
-    const buttons = gallery.querySelectorAll(".thumb-button");
+    galleries.forEach((gallery) => {
+        const mainImage = gallery.querySelector(".cabin-main-image");
+        const buttons = gallery.querySelectorAll(".thumb-button");
 
-    buttons.forEach((button) => {
-        button.addEventListener("click", () => {
-            if (button.classList.contains("is-active")) {
-                return;
-            }
+        if (!mainImage || !buttons.length) {
+            return;
+        }
 
-            buttons.forEach((item) => item.classList.remove("is-active"));
-            button.classList.add("is-active");
-            mainImage.classList.add("is-changing");
+        buttons.forEach((button) => {
+            button.addEventListener("click", () => {
+                if (button.classList.contains("is-active")) {
+                    return;
+                }
 
-            window.setTimeout(() => {
-                mainImage.src = button.dataset.imageSrc;
-                mainImage.alt = button.dataset.imageAlt;
-                mainImage.classList.remove("is-changing");
-            }, 180);
+                buttons.forEach((item) => item.classList.remove("is-active"));
+                button.classList.add("is-active");
+                mainImage.classList.add("is-changing");
+
+                window.setTimeout(() => {
+                    mainImage.src = button.dataset.imageSrc;
+                    mainImage.alt = button.dataset.imageAlt;
+                    mainImage.classList.remove("is-changing");
+                }, 180);
+            });
         });
     });
 }

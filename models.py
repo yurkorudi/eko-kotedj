@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -36,7 +36,10 @@ class Booking(db.Model):
     status = db.Column(db.String(20), default="pending", nullable=False, index=True)
     source = db.Column(db.String(20), default="guest", nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    home_id = db.Column(db.Integer, nullable=False)
+    expires_at = db.Column(db.DateTime, default=lambda: datetime.utcnow() + timedelta(hours=24), nullable=True, index=True)
+    home_id = db.Column(db.Integer, db.ForeignKey("home.id"), nullable=False, index=True)
+
+    home = db.relationship("Home", back_populates="bookings")
 
     @property
     def guest_name(self):
@@ -59,7 +62,10 @@ class CabinImage(db.Model):
     image_path = db.Column(db.String(255), nullable=False)
     alt_text = db.Column(db.String(160), nullable=False, default="Фото хатинки")
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    home_id = db.Column(db.Integer, nullable=False, default="1")
+    is_main = db.Column(db.Boolean, default=False, nullable=False, index=True)
+    home_id = db.Column(db.Integer, db.ForeignKey("home.id"), nullable=False, default=1, index=True)
+
+    home = db.relationship("Home", back_populates="images")
 
 class HeroImage(db.Model):
     __tablename__ = "hero_images"
@@ -74,11 +80,29 @@ class Home(db.Model):
     __tablename__ = "home"
 
     id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.String(30), nullable=True, index=True)
     name = db.Column(db.String(80), nullable=False)
-    description = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=False)
     daily_price = db.Column(db.Integer, nullable=False)
     holiday_price = db.Column(db.Integer, nullable=False)
+    discount = db.Column(db.Integer, nullable=True)
+    capacity = db.Column(db.Integer, nullable=True)
+    area = db.Column(db.Integer, nullable=True)
+    rooms = db.Column(db.Integer, nullable=True)
+    beds = db.Column(db.Integer, nullable=True)
     amenities = db.Column(db.String(255))
+    rules = db.Column(db.Text)
+
+    bookings = db.relationship("Booking", back_populates="home", cascade="all, delete-orphan")
+    images = db.relationship("CabinImage", back_populates="home", cascade="all, delete-orphan")
+
+    @property
+    def display_number(self):
+        return self.number or str(self.id)
+
+    @property
+    def main_image(self):
+        return next((image for image in self.images if image.is_main), None)
 
 
 class Comment(db.Model):
@@ -88,4 +112,4 @@ class Comment(db.Model):
     name = db.Column(db.String(80), nullable=False)
     comment = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    home_id = db.Column(db.Integer, nullable=False)
+    home_id = db.Column(db.Integer, db.ForeignKey("home.id"), nullable=False, index=True)

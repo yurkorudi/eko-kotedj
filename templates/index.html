@@ -37,6 +37,18 @@
                 </button>
                 {% endfor %}
             </div>
+
+            <div class="home-specs">
+                {% if homes.capacity %}<span>До {{ homes.capacity }} гостей</span>{% endif %}
+                {% if homes.area %}<span>{{ homes.area }} м²</span>{% endif %}
+                {% if homes.rooms %}<span>{{ homes.rooms }} кімн.</span>{% endif %}
+                {% if homes.beds %}<span>{{ homes.beds }} ліжк.</span>{% endif %}
+                {% if homes.discount %}<span>Знижка {{ homes.discount }}%</span>{% endif %}
+            </div>
+
+            {% if homes.rules %}
+            <p class="home-rules">{{ homes.rules }}</p>
+            {% endif %}
             {% endif %}
         </div>
 
@@ -52,7 +64,7 @@
             </div>
 
             <div class="amenities">
-                {% for amenity in homes.amenities.split(", ") %}
+                {% for amenity in (homes.amenities or "").split(", ") if amenity %}
                 <span class="chip"><svg>
                         <use href="#{{ icon_map[amenity] }}"></use>
                     </svg>{{ amenity }}</span>
@@ -73,6 +85,7 @@
         <form class="calendar-card" action="{{ url_for('main.booking') }}" method="get" data-inline-calendar-form data-blocked='{{ blocked_dates.get(homes.id, [])|tojson }}'>
             <input type="hidden" name="check_in">
             <input type="hidden" name="check_out">
+            <input type="hidden" name="home_id" value="{{ homes.id }}">
             <input class="calendar-anchor" type="text" data-inline-calendar aria-label="Календар доступності" readonly>
             <div class="calendar-summary">
                 <div>

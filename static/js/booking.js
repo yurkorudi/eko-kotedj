@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const homeId = sessionStorage.getItem('home_id');
-    if (homeId) {
-        document.getElementById('home_id').value = homeId;
+    const homeInput = document.getElementById('home_id');
+    if (homeId && homeInput && !homeInput.value) {
+        homeInput.value = homeId;
     }
 });

@@ -9,7 +9,7 @@ load_dotenv(BASE_DIR / ".env")
 
 
 class Config:
-    SECRET_KEY = os.getenv("SECRET_KEY", "change-me-in-production")
+    SECRET_KEY = os.getenv("SECRET_KEY", "QweAsd15243")
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
         "mysql+pymysql://db_admin:QweAsd15243@24.144.117.96/eko_kotedj?charset=utf8mb4",
