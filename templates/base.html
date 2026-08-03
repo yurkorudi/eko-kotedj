@@ -1,27 +1,73 @@
 <!doctype html>
 <html lang="uk">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Еко Котедж у Карпатах{% endblock %}</title>
+    <meta name="description"
+        content="Еко котедж у Верховині для відпочинку в Карпатах. Комфортний будинок серед гір для сімейного, романтичного та заміського відпочинку. Бронювання без посередників.">
+    <meta name="keywords" content="
+    еко котедж,
+    котедж Карпати,
+    котедж Верховина,
+    будинок у Верховині,
+    будинок в Карпатах,
+    котедж подобово,
+    котедж для відпочинку,
+    оренда котеджу Карпати,
+    оренда будинку Верховина,
+    відпочинок у Верховині,
+    відпочинок в Карпатах,
+    садиба Верховина,
+    садиба Карпати,
+    житло Верховина,
+    будиночок у горах,
+    відпочинок у горах,
+    відпочинок на природі,
+    сімейний відпочинок,
+    романтичний відпочинок,
+    відпочинок на вихідні,
+    відпочинок з дітьми,
+    карпатські гори,
+    гуцульський край,
+    зелений туризм,
+    еко відпочинок
+    ">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Еко котедж у Верховині">
+    <meta property="og:description" content="Відпочинок у Карпатах серед природи та гір.">
+    <meta property="og:image" content="https://example.com/images/cover.jpg">
+    <meta property="og:url" content="https://example.com">
+    <meta property="og:locale" content="uk_UA">
+    <meta property="og:site_name" content="Еко Котедж">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Еко котедж у Верховині">
+    <meta name="twitter:description" content="Комфортний відпочинок у Карпатах.">    
+    <meta name="twitter:image" content="https://example.com/images/cover.jpg">
+
+    <meta name="robots" content="index, follow">
+    
+    <title>{% block title %}Еко Котедж у Верховині{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body class="{% block body_class %}{% endblock %}">
     {% include 'includes/header.html' %}
 
     <main>
         {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-list">
-                    {% for category, message in messages %}
-                        <p class="flash flash-{{ category }}">{{ message }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
+        {% if messages %}
+        <div class="flash-list">
+            {% for category, message in messages %}
+            <p class="flash flash-{{ category }}">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% endwith %}
 
         {% block content %}{% endblock %}
@@ -51,7 +97,9 @@
             <path d="M17 18v2"></path>
         </symbol>
         <symbol id="icon-fire" viewBox="0 0 24 24">
-            <path d="M12 22c4 0 7-2.7 7-6.8 0-3.2-2.1-5.7-4.6-7.8.1 2.4-.8 3.9-2.4 4.8.3-3.2-1.3-5.6-4-8.2.2 4.4-3 6.4-3 11.1C5 19.2 8 22 12 22Z"></path>
+            <path
+                d="M12 22c4 0 7-2.7 7-6.8 0-3.2-2.1-5.7-4.6-7.8.1 2.4-.8 3.9-2.4 4.8.3-3.2-1.3-5.6-4-8.2.2 4.4-3 6.4-3 11.1C5 19.2 8 22 12 22Z">
+            </path>
         </symbol>
         <symbol id="icon-bath" viewBox="0 0 24 24">
             <path d="M4 11h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6Z"></path>
@@ -80,4 +128,5 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/uk.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
+
 </html>
